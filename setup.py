@@ -1,3 +1,13 @@
+'''
+Package description and configuration.
+To release to PyPI test:
+  - python setup.py register -r pypitest
+  - python setup.py sdist upload -r pypitest
+To release to PyPI:
+  - python setup.py register -r pypi
+  - python setup.py sdist upload -r pypi
+'''
+
 try:
     from setuptools import setup
 except ImportError:
