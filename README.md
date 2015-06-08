@@ -2,3 +2,7 @@
 
 # py_sak
 Python Swiss Army Knife: common utilities and helpers for boilerplate code
+
+To install the latest version of `py_sak`, run:
+
+    pip install --upgrade py_sak
