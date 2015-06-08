@@ -1,5 +1,5 @@
 from unittest2 import TestCase, main
-from py_sar.validation import is_float, is_int, is_valid_file, is_valid_dir, is_readable
+from py_sak.validation import is_float, is_int, is_valid_file, is_valid_dir, is_readable
 from tests.test_utilities import TempFile, TempDir, UnreadableTempFile, UnreadableTempDir
 
 class ValidationTest(TestCase):

@@ -9,6 +9,6 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script: 
-  - nosetests --with-coverage --cover-package=py_sar
+  - nosetests --with-coverage --cover-package=py_sak
 after_success: 
   - coveralls
