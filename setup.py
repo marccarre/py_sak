@@ -12,7 +12,7 @@ config = {
     'author': 'Marc Carré',
     'author_email': 'carre.marc@gmail.com',
     'url': 'https://github.com/marccarre/py_sar',
-    'download_url': 'https://github.com/marccarre/py_sar',
+    'download_url': 'https://github.com/marccarre/py_sar/tarball/0.1',
     'keywords': ['common', 'utilities', 'utility', 'utils', 'util', 'helpers', 'helper', 'input validation', 'validation'],
 }
 
