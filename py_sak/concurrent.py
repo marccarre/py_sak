@@ -30,7 +30,7 @@ def concurrent_class_factory(concurrent_class_name, thread_unsafe_class):
     The resulting class's __init__ method optionally accepts: %s
     '''
     concurrent_class = _create_blank_concurrent_class(concurrent_class_name, thread_unsafe_class)
-    for method_name, method in getmembers(thread_unsafe_class, ismethod):
+    for method_name, method in getmembers(thread_unsafe_class, lambda x: ismethod(x) or isfunction(x)):
         if not method_name.startswith('_'):
             setattr(concurrent_class, method_name, _mapper_for(method, method_name))
     return concurrent_class
