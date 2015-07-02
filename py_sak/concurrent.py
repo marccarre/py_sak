@@ -50,13 +50,13 @@ def _pool_for_io_bound_workload(thread_local, factory, factory_args, num_threads
     if factory_args is None:
         return ThreadPool(processes=num_threads, initializer=initializer)
     else: 
-        return ThreadPool(processes=num_threads, initializer=initializer, initargs=factory_args)
+        return ThreadPool(processes=num_threads, initializer=initializer, initargs=[factory_args])
 
 def _get_or_create_object(thread_local, factory, factory_args=None):
     thread_unsafe_object = getattr(thread_local, 'thread_unsafe_object', None)
     if not thread_unsafe_object:
         logging.info('Creating thread-unsafe object in thread %s...' % current_thread())
-        thread_local.thread_unsafe_object = factory() if (factory_args is None) else factory(factory_args)
+        thread_local.thread_unsafe_object = factory() if (factory_args is None) else factory(*factory_args)
 
 def _mapper_for(method, method_name): 
     def lazy_method(method_name, mapper_args):

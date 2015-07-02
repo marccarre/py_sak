@@ -21,6 +21,16 @@ class Multiplier(object):
 ConcurrentMultiplier = concurrent_class_factory('ConcurrentMultiplier', Multiplier)
 
 
+class Exponentiator(object):
+    def __init__(self, factor, exponent):
+        self._factor   = factor
+        self._exponent = exponent
+    def exponentiate(self, x):
+        return self._factor * (x ** self._exponent)
+
+ConcurrentExponentiator = concurrent_class_factory('ConcurrentExponentiator', Exponentiator)
+
+
 class ConcurrentTest(TestCase):
     def test_concurrent_increment(self):        
         concurrent_inc = ConcurrentIncrementer()
@@ -29,6 +39,10 @@ class ConcurrentTest(TestCase):
     def test_concurrent_multiply(self):
         concurrent_multiplier = ConcurrentMultiplier(factory_args=[2])
         self.assertEqual(concurrent_multiplier.multiply([1, 2, 3, 4, 5]), [2, 4, 6, 8, 10])
+
+    def test_concurrent_exponentiate(self):
+        concurrent_exponentiator = ConcurrentExponentiator(factory_args=[3, 2])
+        self.assertEqual(concurrent_exponentiator.exponentiate([1, 2, 3, 4, 5]), [3, 12, 27, 48, 75])
 
     def test_docstring_is_preserved_when_possible(self):
         concurrent_inc = ConcurrentIncrementer()
