@@ -2,7 +2,7 @@ import logging
 from multiprocessing.pool import ThreadPool
 from multiprocessing import cpu_count
 from threading import local, current_thread
-from inspect import getmembers, ismethod, isfunction, getargspec
+from inspect import getmembers, ismethod, isfunction
 from functools import partial
 
 
