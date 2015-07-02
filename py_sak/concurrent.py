@@ -4,6 +4,7 @@ from multiprocessing import cpu_count
 from threading import local, current_thread
 from inspect import getmembers, ismethod, isfunction
 from functools import partial
+from py_sak.functions import log_debug, try_catch
 
 
 _DOC_STRING = '''
@@ -18,6 +19,10 @@ _DOC_STRING = '''
     It needs to conform to multiprocessing.Pool's API.
     If no pool is provided, default is a thread-pool (multiprocessing.pool.ThreadPool), 
     which is only recommended for I/O-bound processes, as the GIL prevents true parallelism.
+
+    - raise_exceptions (Optional, Default: False):
+    When set to False, exceptions will be caught and return as a resulting object.
+    When set to True, concurrent processing will be interrupted and exception raised.
 '''
 
 def concurrent_class_factory(concurrent_class_name, thread_unsafe_class):
@@ -39,7 +44,8 @@ concurrent_class_factory.__doc__ = concurrent_class_factory.__doc__ % _DOC_STRIN
 
 
 def _create_blank_concurrent_class(concurrent_class_name, thread_unsafe_class):
-    def __init__(self, factory=None, factory_args=None, pool=None):
+    def __init__(self, factory=None, factory_args=None, pool=None, raise_exceptions=False):
+        self._raise_exceptions = raise_exceptions
         self._local = local()
         self._pool = pool or _pool_for_io_bound_workload(self._local, factory or thread_unsafe_class, factory_args)
     __init__.__doc__ = _DOC_STRING
@@ -60,13 +66,9 @@ def _get_or_create_object(thread_local, factory, factory_args=None):
 
 def _mapper_for(method, method_name): 
     def lazy_method(method_name, mapper_args):
-        logging.debug('Starting "%s" in thread %s...' % (method_name, current_thread()))
         self, args = mapper_args
-        thread_unsafe_object = self._local.thread_unsafe_object
-        thread_unsafe_method = getattr(thread_unsafe_object, method_name)
-        results = thread_unsafe_method(args)
-        logging.debug('Finished "%s" in thread %s...' % (method_name, current_thread()))
-        return results
+        f = getattr(self._local.thread_unsafe_object, method_name)
+        return log_debug(f, [args]) if self._raise_exceptions else try_catch(f, [args])
 
     mapper_method = lambda self, iterable, chunk_size=None: self._pool.map(
             partial(lazy_method, method_name), 
