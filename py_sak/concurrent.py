@@ -20,6 +20,11 @@ _DOC_STRING = '''
     If no pool is provided, default is a thread-pool (multiprocessing.pool.ThreadPool), 
     which is only recommended for I/O-bound processes, as the GIL prevents true parallelism.
 
+    - num_threads (Optional, Default: 4*cpu_count())
+    The number of worker threads to allocate to the pool, if none is provided.
+    N.B.: it is recommended to benchmark your client with various values for this parameter, 
+    as the optimal performance will depend on both your hardware and your workload.
+
     - raise_exceptions (Optional, Default: False):
     When set to False, exceptions will be caught and return as a resulting object.
     When set to True, concurrent processing will be interrupted and exception raised.
@@ -44,14 +49,14 @@ concurrent_class_factory.__doc__ = concurrent_class_factory.__doc__ % _DOC_STRIN
 
 
 def _create_blank_concurrent_class(concurrent_class_name, thread_unsafe_class):
-    def __init__(self, factory=None, factory_args=None, pool=None, raise_exceptions=False):
+    def __init__(self, factory=None, factory_args=None, pool=None, num_threads=4*cpu_count(), raise_exceptions=False):
         self._raise_exceptions = raise_exceptions
         self._local = local()
-        self._pool = pool or _pool_for_io_bound_workload(self._local, factory or thread_unsafe_class, factory_args)
+        self._pool = pool or _pool_for_io_bound_workload(self._local, factory or thread_unsafe_class, factory_args, num_threads)
     __init__.__doc__ = _DOC_STRING
     return type(concurrent_class_name, (object,), {'__init__': __init__})
 
-def _pool_for_io_bound_workload(thread_local, factory, factory_args, num_threads=4*cpu_count()):
+def _pool_for_io_bound_workload(thread_local, factory, factory_args, num_threads):
     initializer = partial(_get_or_create_object, thread_local, factory)
     if factory_args is None:
         return ThreadPool(processes=num_threads, initializer=initializer)

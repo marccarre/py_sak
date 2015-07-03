@@ -41,6 +41,10 @@ class ConcurrentTest(TestCase):
         concurrent_obj = ConcurrentIncrementer()
         self.assertEqual(concurrent_obj.increment([1, 2, 3, 4, 5]), [2, 3, 4, 5, 6])
 
+    def test_concurrent_increment_custom_num_threads(self):        
+        concurrent_obj = ConcurrentIncrementer(num_threads=2)
+        self.assertEqual(concurrent_obj.increment([1, 2, 3, 4, 5]), [2, 3, 4, 5, 6])
+
     def test_concurrent_multiply_one_arg_ctor(self):
         concurrent_obj = ConcurrentMultiplier(factory_args=[2])
         self.assertEqual(concurrent_obj.multiply([1, 2, 3, 4, 5]), [2, 4, 6, 8, 10])
