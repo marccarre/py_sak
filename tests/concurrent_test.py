@@ -8,6 +8,11 @@ class Incrementer(object):
         return x + 1
 ConcurrentIncrementer = concurrent_class_factory('ConcurrentIncrementer', Incrementer)
 
+class Adder(object):
+    def add(self, x, y, z=0):
+        return x + y + z
+ConcurrentAdder = concurrent_class_factory('ConcurrentAdder', Adder)
+
 class Multiplier(object):
     def __init__(self, factor):
         self._factor = factor
@@ -32,17 +37,26 @@ ConcurrentChaosMonkey = concurrent_class_factory('ConcurrentChaosMonkey', ChaosM
 
 
 class ConcurrentTest(TestCase):
-    def test_concurrent_increment(self):        
+    def test_concurrent_increment_no_arg_ctor(self):        
         concurrent_obj = ConcurrentIncrementer()
         self.assertEqual(concurrent_obj.increment([1, 2, 3, 4, 5]), [2, 3, 4, 5, 6])
 
-    def test_concurrent_multiply(self):
+    def test_concurrent_multiply_one_arg_ctor(self):
         concurrent_obj = ConcurrentMultiplier(factory_args=[2])
         self.assertEqual(concurrent_obj.multiply([1, 2, 3, 4, 5]), [2, 4, 6, 8, 10])
 
-    def test_concurrent_exponentiate(self):
+    def test_concurrent_exponentiate_two_args_ctor(self):
         concurrent_obj = ConcurrentExponentiator(factory_args=[3, 2])
         self.assertEqual(concurrent_obj.exponentiate([1, 2, 3, 4, 5]), [3, 12, 27, 48, 75])
+
+    def test_concurrent_add_tuple_args(self):
+        self.assertEqual(ConcurrentAdder().add([(1,1), (1,1,1)]), [2, 3])
+
+    def test_concurrent_add_list_args(self):
+        self.assertEqual(ConcurrentAdder().add([[1,1], [1,1,1]]), [2, 3])
+
+    def test_concurrent_add_dict_args(self):
+        self.assertEqual(ConcurrentAdder().add([{'x':1,'y':1}, {'x':1,'y':1,'z':1}]), [2, 3])
 
     def test_concurrent_throws_with_exception_handling(self):
         concurrent_obj = ConcurrentChaosMonkey()

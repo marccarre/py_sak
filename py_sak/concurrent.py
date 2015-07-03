@@ -68,7 +68,13 @@ def _mapper_for(method, method_name):
     def lazy_method(method_name, mapper_args):
         self, args = mapper_args
         f = getattr(self._local.thread_unsafe_object, method_name)
-        return log_debug(f, [args]) if self._raise_exceptions else try_catch(f, [args])
+        args_type = type(args)
+        if (args_type is list) or (args_type is tuple):
+            return log_debug(f, *args)  if self._raise_exceptions else try_catch(f, *args)
+        elif args_type is dict:
+            return log_debug(f, **args) if self._raise_exceptions else try_catch(f, **args)
+        else:
+            return log_debug(f, args)   if self._raise_exceptions else try_catch(f, args)
 
     mapper_method = lambda self, iterable, chunk_size=None: self._pool.map(
             partial(lazy_method, method_name), 
