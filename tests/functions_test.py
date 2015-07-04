@@ -12,6 +12,12 @@ class FunctionsTest(TestCase):
     def test_try_catch_two_args(self):
         self.assertEquals(try_catch(lambda x,y: x+y+1337, 1, 1), 1339)
 
+    def test_try_catch_named_args_one_arg(self):
+        self.assertEquals(try_catch(lambda x: x+1337, x=1), 1338)
+
+    def test_try_catch_named_args_two_args_one_named(self):
+        self.assertEquals(try_catch(lambda x,y: x+y+1337, 1, y=1), 1339)
+
     def test_try_catch_args_list_one_arg(self):
         self.assertEquals(try_catch(lambda x: x+1337, *[1]), 1338)
 
