@@ -19,11 +19,11 @@ def log_debug(func, *args, **kwargs):
 def try_catch(func, *args, **kwargs):
     '''
     Wrap call of provided function with try/except block and debug log statements.
-    If an instance of 'StandardError' (or one of its subclasses) is thrown by 'func',
+    If an instance of 'Exception' (or one of its subclasses) is thrown by 'func',
     it is caught, and the exception object itself is return as a result.
     '''
     try:
         return log_debug(func, *args, **kwargs)
-    except StandardError as exc:
+    except Exception as exc:
         logging.debug('Error in "%s" in thread %s: %s', func.__name__, current_thread(), exc)
         return exc
