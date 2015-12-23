@@ -2,6 +2,7 @@ import os
 from shutil import rmtree
 from stat import S_IWUSR
 from tempfile import mkstemp, mkdtemp
+from errno import ENOENT
 
 class TempFile(object):
     def _create(self):
