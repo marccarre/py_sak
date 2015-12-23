@@ -1,8 +1,8 @@
 import os
+import errno
 from shutil import rmtree
 from stat import S_IWUSR
 from tempfile import mkstemp, mkdtemp
-from errno import ENOENT
 
 class TempFile(object):
     def _create(self):
@@ -43,7 +43,7 @@ class TempDir(TempFile):
         try:
             rmtree(self._path)
         except OSError as e:
-            if e.errno != ENOENT:  # Other error than 'No such file or directory'.
+            if e.errno != errno.ENOENT:  # Other error than 'No such file or directory'.
                 raise
 
 class UnreadableTempDir(TempDir, _Unreadable):
